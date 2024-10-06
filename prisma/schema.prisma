@@ -1,0 +1,86 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id    Int    @id @default(autoincrement())
+  name  String
+  email String @unique
+}
+
+model Instrument_Data_Dump {
+  id                             Int      @id @default(autoincrement())
+  isin_code                      String   @unique
+  bos_code                       String   @unique
+  amc_name                       String   
+  name                           String   
+  is_purchase_allowed            Int
+  is_redemption_allowed          Int
+  min_purchase_amount            Int
+  purchase_amount_multiplier     Int
+  min_additional_purchase_amount Int
+  minimum_redemption_quantity    Int
+  redemption_quantity_mutliplier Int
+  dividend_type                  String
+  asset_type                     String
+  scheme_plan                    String
+  settlement_type                String
+  last_price                     Int
+  last_price_date                DateTime
+  is_active                      Boolean  @default(true)
+  created_date                   DateTime @default(now())
+  updated_date                   DateTime @updatedAt
+
+  @@map("instrument_data_dump")
+}
+
+model Instrument {
+  id                             Int      @id @default(autoincrement())
+  isin_code                      String   @unique
+  bos_code                       String   @unique
+  amc_name                       String   
+  name                           String   
+  is_purchase_allowed            Int
+  is_redemption_allowed          Int
+  min_purchase_amount            Int
+  purchase_amount_multiplier     Int
+  min_additional_purchase_amount Int
+  minimum_redemption_quantity    Int
+  redemption_quantity_mutliplier Int
+  dividend_type                  String
+  asset_type                     String
+  scheme_plan                    String
+  settlement_type                String
+  last_price                     Int
+  last_price_date                DateTime
+  asset                          Asset    @relation(fields: [fk_id_asset], references: [id])
+  fk_id_asset                    Int      @unique
+  is_active                      Boolean  @default(true)
+  created_date                   DateTime @default(now())
+  updated_date                   DateTime @updatedAt
+
+  @@map("instrument")
+}
+
+model Asset {
+  id           Int          @id @default(autoincrement())
+  name         String       @unique
+  bos_code     String       @unique
+  is_active    Boolean      @default(true)
+  created_date DateTime     @default(now())
+  updated_date DateTime     @updatedAt
+  instrument   Instrument[]
+
+  @@map("asset")
+}
